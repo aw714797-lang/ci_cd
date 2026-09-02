@@ -8,14 +8,14 @@ on:
   workflow_dispatch: # Manual trigger
 
 env:
-  NODE_VERSION: '24'
+  NODE_VERSION: '24.x'
   APP_NAME: 'vanilla-app'
 
 jobs:
-  name: 'quality'
   build-and-test:
+    name: 'quality'
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
