@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple HTML Application</title>
+    <!-- A clean, minimal style with a touch of personality -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f6f9fc 0%, #e6f0f5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            padding: 1rem;
+        }
+
+        .app-card {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+            background: #ffffff;
+            border-radius: 2.5rem;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 20, 30, 0.25),
+                        0 8px 24px -6px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.2s ease;
+        }
+
+        .app-card:hover {
+            transform: scale(1.01);
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #0a2a3b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subhead {
+            font-size: 1rem;
+            color: #3a5a6b;
+            border-left: 4px solid #7fc1d9;
+            padding-left: 1rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        .greeting-section {
+            background: #f0f6fa;
+            border-radius: 2rem;
+            padding: 1.8rem 1.8rem 1.8rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.02);
+        }
+
+        .greeting-text {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #0e2e3f;
+        }
+
+        .greeting-text span {
+            background: #d3e4ed;
+            padding: 0.1rem 0.8rem;
+            border-radius: 30px;
+            font-weight: 600;
+            color: #004466;
+        }
+
+        .action-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 1.5rem 0 1.8rem 0;
+        }
+
+        .action-btn {
+            flex: 1 0 auto;
+            background: white;
+            border: 1px solid #cbdde8;
+            padding: 0.7rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 500;
+            color: #1a4055;
+            cursor: pointer;
+            transition: 0.15s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.95rem;
+        }
+
+        .action-btn:hover {
+            background: #e3eff7;
+            border-color: #6dabc9;
+            box-shadow: 0 4px 8px rgba(0, 60, 90, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .action-btn:active {
+            transform: scale(0.96);
+            background: #d0e4ef;
+        }
+
+        .primary-btn {
+            background: #1f5b77;
+            border-color: #1f5b77;
+            color: white;
+            box-shadow: 0 4px 8px rgba(20, 80, 110, 0.2);
+        }
+
+        .primary-btn:hover {
+            background: #154a63;
+            border-color: #154a63;
+            color: white;
+        }
+
+        .counter-panel {
+            background: #fafffe;
+            border-radius: 2rem;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #d7e6f0;
+            margin: 1.8rem 0 1.2rem 0;
+        }
+
+        .counter-label {
+            font-weight: 400;
+            color: #1d4d63;
+            letter-spacing: 0.3px;
+        }
+
+        .counter-value {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #003952;
+            background: #e1eef8;
+            padding: 0 1.2rem;
+            border-radius: 80px;
+            line-height: 1.4;
+            min-width: 3.8rem;
+            text-align: center;
+        }
+
+        .message-box {
+            background: #eaf2f8;
+            border-radius: 1.8rem;
+            padding: 0.8rem 1.8rem;
+            margin-top: 1.8rem;
+            border-left: 5px solid #4797b5;
+            font-size: 1rem;
+            color: #003857;
+            transition: 0.2s;
+            min-height: 4rem;
+            display: flex;
+            align-items: center;
+            word-break: break-word;
+        }
+
+        .message-box i {
+            font-style: normal;
+            background: #bfdae9;
+            padding: 0.1rem 0.8rem;
+            border-radius: 40px;
+            margin-right: 8px;
+            font-weight: 500;
+        }
+
+        .footer-note {
+            margin-top: 2.2rem;
+            font-size: 0.8rem;
+            color: #5d7f90;
+            text-align: center;
+            border-top: 1px solid #dbe8f0;
+            padding-top: 1.8rem;
+            letter-spacing: 0.2px;
+        }
+
+        .footer-note span {
+            background: #d1e3ed;
+            padding: 0.1rem 0.8rem;
+            border-radius: 40px;
+        }
+
+        /* responsive */
+        @media (max-width: 500px) {
+            .app-card {
+                padding: 1.8rem 1.2rem;
+            }
+            h1 {
+                font-size: 1.9rem;
+            }
+            .greeting-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+            .counter-panel {
+                flex-direction: column;
+                gap: 0.3rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-card" role="main">
+        <h1>
+            ✦ Hello
+            <span style="font-weight:300; font-size:1.8rem; color:#3a6b81;">app</span>
+        </h1>
+        <div class="subhead">simple · interactive · vanilla</div>
+
+        <!-- Greeting block -->
+        <div class="greeting-section">
+            <div class="greeting-text">
+                👋 <span id="userNameDisplay">Guest</span>
+            </div>
+            <button class="action-btn primary-btn" id="nameChangeBtn" aria-label="Change your name">
+                ✎ change name
+            </button>
+        </div>
+
+        <!-- action buttons -->
+        <div class="action-grid">
+            <button class="action-btn" id="greetBtn">🌟 say hello</button>
+            <button class="action-btn" id="resetBtn">↺ reset</button>
+            <button class="action-btn" id="colorToggleBtn">🎨 toggle color</button>
+        </div>
+
+        <!-- counter -->
+        <div class="counter-panel">
+            <span class="counter-label">⚡ interaction count</span>
+            <span class="counter-value" id="counterDisplay">0</span>
+        </div>
+
+        <!-- dynamic message area -->
+        <div class="message-box" id="messageBox">
+            <i>📌</i> <span id="messageText">Welcome! Click a button.</span>
+        </div>
+
+        <div class="footer-note">
+            <span>⌘</span> simple html application · pure js
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            "use strict";
+
+            // ----- DOM refs -----
+            const userNameSpan = document.getElementById('userNameDisplay');
+            const counterSpan = document.getElementById('counterDisplay');
+            const messageText = document.getElementById('messageText');
+            const messageBox = document.getElementById('messageBox');
+
+            const nameChangeBtn = document.getElementById('nameChangeBtn');
+            const greetBtn = document.getElementById('greetBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const colorToggleBtn = document.getElementById('colorToggleBtn');
+
+            // ----- state -----
+            let userName = 'Guest';
+            let interactionCount = 0;
+            let colorToggled = false;        // track extra visual flair
+
+            // ----- helper: update UI (counter + optional message) -----
+            function updateCounter() {
+                counterSpan.textContent = interactionCount;
+            }
+
+            // set a message in the message box (with optional icon)
+            function setMessage(text, icon = '📌') {
+                messageText.textContent = text;
+                // change the icon in the message box (first child is the <i>)
+                const iconElem = messageBox.querySelector('i');
+                if (iconElem) {
+                    iconElem.textContent = icon;
+                }
+            }
+
+            // full refresh of the greeting display
+            function refreshGreeting() {
+                userNameSpan.textContent = userName;
+            }
+
+            // increment counter and update display
+            function incrementCounter() {
+                interactionCount += 1;
+                updateCounter();
+            }
+
+            // ----- core actions -----
+
+            // 1. change name (prompt)
+            function changeName() {
+                const newName = prompt('Enter your name:', userName);
+                if (newName !== null) {
+                    const trimmed = newName.trim();
+                    if (trimmed !== '') {
+                        userName = trimmed;
+                        refreshGreeting();
+                        setMessage(`Name changed to “${userName}”`, '✏️');
+                    } else {
+                        setMessage('Name cannot be empty. Try again.', '⚠️');
+                        // still count as interaction? yes, but we didn't change name.
+                    }
+                    incrementCounter();
+                } else {
+                    // user cancelled
+                    setMessage('Name change cancelled.', '↩️');
+                    incrementCounter();
+                }
+            }
+
+            // 2. greet
+            function greet() {
+                const greeting = `Hello, ${userName}! ✨`;
+                setMessage(greeting, '👋');
+                incrementCounter();
+            }
+
+            // 3. reset (counter + message + name back to Guest)
+            function resetApp() {
+                userName = 'Guest';
+                refreshGreeting();
+                interactionCount = 0;
+                updateCounter();
+                setMessage('App reset. Welcome back, Guest.', '🔄');
+                // also reset color toggle effect if any
+                if (colorToggled) {
+                    colorToggled = false;
+                    document.querySelector('.app-card').style.background = '#ffffff';
+                    document.querySelector('.app-card').style.borderColor = 'rgba(255,255,255,0.5)';
+                }
+                // extra: reset any inline style on message box
+                messageBox.style.background = '#eaf2f8';
+                messageBox.style.borderLeftColor = '#4797b5';
+            }
+
+            // 4. toggle color (fun visual effect)
+            function toggleColor() {
+                colorToggled = !colorToggled;
+                const card = document.querySelector('.app-card');
+                const msgBox = document.querySelector('.message-box');
+                if (colorToggled) {
+                    // soft pastel tint
+                    card.style.background = '#f3f0fa';
+                    card.style.borderColor = '#b7aad9';
+                    msgBox.style.background = '#ede7f9';
+                    msgBox.style.borderLeftColor = '#846bb3';
+                    setMessage('Color mode: soft lavender', '🎨');
+                } else {
+                    card.style.background = '#ffffff';
+                    card.style.borderColor = 'rgba(255,255,255,0.5)';
+                    msgBox.style.background = '#eaf2f8';
+                    msgBox.style.borderLeftColor = '#4797b5';
+                    setMessage('Color mode: default', '🎨');
+                }
+                incrementCounter();
+            }
+
+            // ----- attach event listeners (with safe DOM ready) -----
+            nameChangeBtn.addEventListener('click', changeName);
+            greetBtn.addEventListener('click', greet);
+            resetBtn.addEventListener('click', resetApp);
+            colorToggleBtn.addEventListener('click', toggleColor);
+
+            // ----- extra: set initial message & counter -----
+            // ensure starting state is consistent
+            refreshGreeting();
+            updateCounter();
+            setMessage('Welcome! Click a button.', '📌');
+
+            // small extra: keyboard shortcut? not necessary, but we keep it simple.
+
+            // (optional) if user clicks on message box, we can show a tiny easter egg? 
+            // but we keep it minimal.
+
+            console.log('✨ Simple HTML Application ready.');
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+name: Full CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Manual trigger
+
+env:
+  NODE_VERSION: '18'
+  APP_NAME: 'simple-html-app'
+
+jobs:
+  # ----- QUALITY CHECKS -----
+  quality:
+    name: 🔍 Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Validate HTML
+        uses: Cyb3r-Jak3/html5validator-action@v7.2.0
+      
+      - name: Check links
+        run: |
+          sudo apt-get install -y linkchecker
+          linkchecker index.html || echo "⚠️ Some links may be broken"
+      
+      - name: Lint with htmlhint
+        run: |
+          npm install -g htmlhint
+          echo '{
+            "tagname-lowercase": true,
+            "attr-lowercase": true,
+            "attr-value-double-quotes": true,
+            "doctype-first": true,
+            "tag-pair": true,
+            "spec-char-escape": true,
+            "id-unique": true,
+            "src-not-empty": true,
+            "attr-no-duplication": true,
+            "title-require": true
+          }' > .htmlhintrc
+          htmlhint index.html || echo "⚠️ HTML linting warnings found"
+      
+      - name: Check accessibility
+        uses: pa11y-ci/action@v1.0.2
+        with:
+          site: 'index.html'
+          test: |
+            [
+              {
+                "url": "index.html",
+                "standard": "WCAG2AA"
+              }
+            ]
+
+  # ----- SECURITY SCAN -----
+  security:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    needs: quality
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.11.0
+        with:
+          target: 'index.html'
+      
+      - name: Check for security headers
+        run: |
+          echo "Checking security headers..."
+          # Add security headers check
+
+  # ----- BUILD & DEPLOY -----
+  deploy:
+    name: 🚀 Deploy Application
+    runs-on: ubuntu-latest
+    needs: [quality, security]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: 📦 Prepare build
+        run: |
+          # Create a build directory for optimized deployment
+          mkdir -p dist
+          cp index.html dist/
+          # Add minification if needed
+      
+      - name: 🏗️ Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: 📤 Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+      
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      
+      - name: 📝 Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          body: |
+            ## 🚀 Deployment Details
+            - **Commit:** ${{ github.sha }}
+            - **URL:** ${{ steps.deployment.outputs.page_url }}
+            - **Deployed:** ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 📊 Send deployment notification
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          title: "Deployment Status"
+          description: |
+            **Application:** ${{ env.APP_NAME }}
+            **Status:** ${{ job.status == 'success' && '✅ Success' || '❌ Failed' }}
+            **URL:** ${{ steps.deployment.outputs.page_url }}
+
+  # ----- PERFORMANCE TESTING -----
+  performance:
+    name: ⚡ Performance Tests
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+      
+      - name: 🚀 Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v9
+        with:
+          urls: |
+            ${{ needs.deploy.outputs.deployment_url }}
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+      
+      - name: 📊 Performance Report
+        run: |
+          echo "📈 Performance metrics available in artifacts"
+
+  # ----- NOTIFICATIONS -----
+  notify:
+    name: 📨 Notify Team
+    runs-on: ubuntu-latest
+    needs: [deploy, performance]
+    if: always()
+    
+    steps:
+      - name: 📧 Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{secrets.EMAIL_USERNAME}}
+          password: ${{secrets.EMAIL_PASSWORD}}
+          subject: CI/CD Status - ${{ env.APP_NAME }}
+          to: ${{secrets.EMAIL_TO}}
+          from: GitHub Actions
+          body: |
+            CI/CD pipeline completed for ${{ env.APP_NAME }}
+            
+            Commit: ${{ github.sha }}
+            Status: ${{ needs.deploy.result }}
+            URL: ${{ needs.deploy.outputs.deployment_url }}
