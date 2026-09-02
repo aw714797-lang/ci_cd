@@ -12,7 +12,7 @@ env:
   APP_NAME: 'vanilla-app'
 
 jobs:
-  name: 'quality'
+  name: quality
   build-and-test:
     runs-on: ubuntu-latest
 
