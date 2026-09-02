@@ -12,10 +12,10 @@ env:
   APP_NAME: 'vanilla-app'
 
 jobs:
-  name: quality
+- name: quality
   build-and-test:
-    runs-on: ubuntu-latest
+  runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+   steps:
+     name: Checkout code
+     uses: actions/checkout@v3
