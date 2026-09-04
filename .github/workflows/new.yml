@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch: # Manual trigger
 
 env:
@@ -17,5 +17,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+      name: Checkout code
       uses: actions/checkout@v4
