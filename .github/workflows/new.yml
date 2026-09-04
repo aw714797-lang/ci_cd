@@ -12,14 +12,33 @@ env:
   APP_NAME: 'vanilla-app'
 
 jobs:
-  build-and-test:
+  ci_stage:
     name: 'quality'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code     
+        uses: actions/checkout@v4
 
       - name: Validate Syntax
         run: |
           npm install -g htmlhint
           htmlhint *.html
+
+  cd_stage:
+    runs-on: self-hosted
+    needs: ci_stage
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy HTML to Nginx Web Root
+        run: |
+          echo "CI Passed! Deploying files to /var/www/html/..."
+          sudo cp -r ./* /var/www/html/
+
+      - name: Reload Nginx Server
+        run: |
+          sudo systemctl reload nginx
+          echo "Site is live"
