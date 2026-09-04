@@ -18,3 +18,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Validate Syntax
+        run: |
+          npm install -g htmlhint
+          htmlhint *.html
