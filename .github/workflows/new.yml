@@ -35,6 +35,8 @@ jobs:
 
       - name: Deploy HTML to Nginx Web Root
         run: |
+
+          sudo rm -f /var/www/html/index.nginx-debian.html
           echo "CI Passed! Deploying files to /var/www/html/..."
           sudo cp -r ./* /var/www/html/
 
